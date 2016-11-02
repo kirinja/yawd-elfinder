@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf import settings
 from test_app.views import IndexView
 
@@ -6,7 +6,7 @@ from test_app.views import IndexView
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'example_project.views.home', name='home'),
     # url(r'^example_project/', include('example_project.foo.urls')),
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', IndexView.as_view()),
     url(r'^elfinder/', include('elfinder.urls'))
-)
+]
 
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
