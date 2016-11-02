@@ -114,7 +114,7 @@ class ElfinderField(models.Field):
     """
     
     description = "An elfinder file model field."
-    __metaclass__ = models.SubfieldBase
+#    __metaclass__ = models.SubfieldBase
 
     def __init__(self, optionset='default', start_path=None, *args, **kwargs):
         self.optionset = optionset
