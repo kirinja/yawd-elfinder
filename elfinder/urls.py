@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib.admin.views.decorators import staff_member_required
-from views import ElfinderConnectorView
+from .views import ElfinderConnectorView
 
 urlpatterns = [
     url(r'^yawd-connector/(?P<optionset>.+)/(?P<start_path>.+)/$',

@@ -1,7 +1,7 @@
 from django.db import models
 from django.forms import CharField
 from django.utils.translation import ugettext as _
-from utils.volumes import get_path_driver
+from .utils.volumes import get_path_driver
 
 try: #attempt to explain south how to handle the ElfinderField
     from south.modelsinspector import add_introspection_rules
@@ -78,7 +78,7 @@ class ElfinderFormField(CharField):
     """
     
     def __init__(self, optionset, start_path, *args, **kwargs):
-        from widgets import ElfinderWidget
+        from .widgets import ElfinderWidget
         super(ElfinderFormField, self).__init__(*args, **kwargs)
         #TODO: elfinder widget should be initialized using possible client options from model field declaration
         self.optionset = optionset 

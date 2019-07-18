@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.forms.widgets import Input
 from django.utils.safestring import mark_safe
 from django.utils.translation import to_locale, get_language, ugettext as _
-from fields import ElfinderFile
-from conf import settings as ls
+from .fields import ElfinderFile
+from .conf import settings as ls
 
 class ElfinderWidget(Input):    
     """
