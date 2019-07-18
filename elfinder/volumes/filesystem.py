@@ -6,7 +6,7 @@ except ImportError:
 from hashlib import md5
 from django.conf import settings
 from elfinder.exceptions import ElfinderErrorMessages, NotAnImageError, DirNotFoundError
-from base import ElfinderVolumeDriver
+from .base import ElfinderVolumeDriver
 
 class ElfinderVolumeLocalFileSystem(ElfinderVolumeDriver):
     """
