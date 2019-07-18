@@ -4,7 +4,6 @@ try:
 except ImportError:
     import Image
 from base64 import b64encode, b64decode
-from string import maketrans
 from tarfile import TarFile
 from django.core.cache import cache
 from django.utils.translation import ugettext as _
@@ -1092,7 +1091,7 @@ class ElfinderVolumeDriver(object):
             #hash is used as id in HTML that means it must contain vaild chars
             #make base64 html safe and append prefix in begining
             hash_ = hash_.encode('utf-8') # unicode filename support
-            hash_ = b64encode(hash_).translate(maketrans('+/=', '-_.'))
+            hash_ = b64encode(hash_).translate(str.maketrans('+/=', '-_.'))
 
             #remove dots '.' at the end (used to be '=' in base64, before the translation)
             hash_ = hash_.rstrip('.')
@@ -1108,7 +1107,7 @@ class ElfinderVolumeDriver(object):
             #cut volume id after it was prepended in encode
             h = hash_[len(self.id()):]
             #replace HTML safe base64 to normal
-            h = h.encode('ascii').translate(maketrans('-_.', '+/='))
+            h = h.encode('ascii').translate(str.maketrans('-_.', '+/='))
             #put cut = at the end
             h += "=" * ((4 - len(h) % 4) % 4)
             h = b64decode(h)
