@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils import unittest
 from elfinder.volumes.filesystem import ElfinderVolumeLocalFileSystem
 from elfinder.volumes.storage import ElfinderVolumeStorage
+import six
 
 class ElfinderVolumeLocalFileSystemTestCase(unittest.TestCase):
     volume_class = ElfinderVolumeLocalFileSystem
@@ -35,7 +36,7 @@ class ElfinderVolumeLocalFileSystemTestCase(unittest.TestCase):
         self.realPath = self.driver.decode(self.default_path)
     
     def test_defaultpath(self):
-        self.assertEqual(isinstance(self.default_path, basestring), True)
+        self.assertEqual(isinstance(self.default_path, six.string_types), True)
         self.assertEqual(len(self.default_path) > 0, True)
     
     def test_dir(self):

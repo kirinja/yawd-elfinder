@@ -9,6 +9,7 @@ from django.core.files import File as DjangoFile
 from django.utils.importlib import import_module
 from elfinder.exceptions import NotAnImageError, ElfinderErrorMessages
 from base import ElfinderVolumeDriver
+import six
 
 class ElfinderVolumeStorage(ElfinderVolumeDriver):
     """
@@ -66,7 +67,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
             else:
                 
                 #load the class if string
-                if isinstance(opts['storageClass'], basestring):
+                if isinstance(opts['storageClass'], six.string_types):
                     split = opts['storageClass'].split('.')
                     storage_module = import_module('.'.join(split[:-1]))
                     opts['storageClass'] = getattr(storage_module, split[-1])

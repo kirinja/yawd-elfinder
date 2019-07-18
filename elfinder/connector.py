@@ -1,7 +1,8 @@
 import os, re, time, urllib
 from django.utils.translation import ugettext as _
-from exceptions import ElfinderErrorMessages, VolumeNotFoundError, DirNotFoundError, FileNotFoundError, NamedError, NotAnImageError
+from .exceptions import ElfinderErrorMessages, VolumeNotFoundError, DirNotFoundError, FileNotFoundError, NamedError, NotAnImageError
 from utils.volumes import instantiate_driver
+import six
 
 class ElfinderConnector:
     """
@@ -115,7 +116,7 @@ class ElfinderConnector:
         """
         errors = []
         for msg in args:
-            if not isinstance(msg, basestring):
+            if not isinstance(msg, six.string_types):
                 errors += msg
             else:
                 errors.append(msg)
@@ -192,10 +193,10 @@ class ElfinderConnector:
         method must be used.
         """
 
-        if isinstance(init, basestring):
+        if isinstance(init, six.string_types):
             init = int(init)
             
-        if isinstance(tree, basestring):
+        if isinstance(tree, six.string_types):
             tree = int(tree)
 
         if not init and not target:
@@ -326,7 +327,7 @@ class ElfinderConnector:
         method must be used.
         """
         
-        if isinstance(download, basestring):
+        if isinstance(download, six.string_types):
             download = int(download)
         
         try:
@@ -517,7 +518,7 @@ class ElfinderConnector:
         method must be used.
         """
         
-        if isinstance(html, basestring):
+        if isinstance(html, six.string_types):
             html = int(html)
         
         header = { 'Content-Type' : 'text/html; charset=utf-8' } if html else {}
@@ -540,7 +541,7 @@ class ElfinderConnector:
             try:
                 file_ = volume.upload(uploaded_file, target)
                 result['added'].append(file_)
-            except Exception, e:
+            except Exception as e:
                 result['warning'] = self.error(ElfinderErrorMessages.ERROR_UPLOAD_FILE, uploaded_file.name, e)
                 self._uploadDebug = 'Upload error: Django handler error'
 
@@ -555,7 +556,7 @@ class ElfinderConnector:
         method must be used.
         """
         
-        if isinstance(cut, basestring):
+        if isinstance(cut, six.string_types):
             cut = int(cut)
 
         error = ElfinderErrorMessages.ERROR_MOVE if cut else ElfinderErrorMessages.ERROR_COPY
@@ -683,7 +684,7 @@ class ElfinderConnector:
         method must be used.
         """
         
-        if isinstance(options, basestring):
+        if isinstance(options, six.string_types):
             options = int(options)
         
         files = []
