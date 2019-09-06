@@ -64,7 +64,7 @@ class ElfinderConnector:
             try:
                 volume = instantiate_driver(o)
             except Exception as e:
-                self._mountErrors.append(e.__unicode__())
+                self._mountErrors.append(str(e))
                 continue
 
             id_ = volume.id()
