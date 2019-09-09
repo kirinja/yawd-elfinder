@@ -1,4 +1,5 @@
 import os, datetime, mimetypes, re, inspect, time, logging
+import collections
 try:
     from PIL import Image
 except ImportError:
@@ -373,8 +374,8 @@ class ElfinderVolumeDriver(object):
             'separator' : self._separator,
             'copyOverwrite' : int(self._options['copyOverwrite']),
             'archivers' : {
-                'create' : self._archivers['create'].keys(),
-                'extract' : self._archivers['extract'].keys()
+                'create' : list(self._archivers['create'].keys()),
+                'extract' : list(self._archivers['extract'].keys())
             }
         }
     
@@ -981,7 +982,7 @@ class ElfinderVolumeDriver(object):
                 raise PermissionDeniedError
 
             path = self.decode(hash_)
-            if not vars().has_key('dir'):
+            if 'dir' not in vars():
                 dir_ = self._dirname(path)
                 stat = self.stat(dir_)
                 if not stat['write']:
@@ -1091,25 +1092,27 @@ class ElfinderVolumeDriver(object):
             #hash is used as id in HTML that means it must contain vaild chars
             #make base64 html safe and append prefix in begining
             hash_ = hash_.encode('utf-8') # unicode filename support
-            hash_ = b64encode(hash_).translate(str.maketrans('+/=', '-_.'))
+            hash_ = b64encode(hash_).translate(bytes.maketrans(b'+/=', b'-_.'))
 
             #remove dots '.' at the end (used to be '=' in base64, before the translation)
-            hash_ = hash_.rstrip('.')
+            hash_ = hash_.rstrip(b'.')
 
             #append volume id to make hash unique
-            return self.id()+hash_
+            return self.id()+hash_.decode()
     
     def decode(self, hash_):
         """
         Decode path from hash.
         """
+        if isinstance(hash_, bytes):
+            hash_ = hash_.decode()
         if hash_.startswith(self.id()):
             #cut volume id after it was prepended in encode
             h = hash_[len(self.id()):]
             #replace HTML safe base64 to normal
-            h = h.encode('ascii').translate(str.maketrans('-_.', '+/='))
+            h = h.encode('ascii').translate(bytes.maketrans(b'-_.', b'+/='))
             #put cut = at the end
-            h += "=" * ((4 - len(h) % 4) % 4)
+            h += "=".encode('utf-8') * ((4 - len(h) % 4) % 4)
             h = b64decode(h)
             h = h.decode('utf-8') # unicode filename support
 
@@ -1649,25 +1652,25 @@ class ElfinderVolumeDriver(object):
         
         #manualy add archivers
         if 'create' in self._options['archivers']:
-            for mime, archiver in self._options['archivers']['create'].items():
+            for mime, archiver in list(self._options['archivers']['create'].items()):
                 try:
                     conf = archiver['archiver']
                     archiver['ext']
                 except:
                     continue
                 #check if conf is class and implements open, add and close methods
-                if re.match(r'application/', mime) and inspect.isclass(conf) and hasattr(conf, 'open') and callable(getattr(conf, 'open')) and hasattr(conf, 'add') and callable(getattr(conf, 'add')) and hasattr(conf, 'close') and callable(getattr(conf, 'close')):
+                if re.match(r'application/', mime) and inspect.isclass(conf) and hasattr(conf, 'open') and isinstance(getattr(conf, 'open'), collections.Callable) and hasattr(conf, 'add') and isinstance(getattr(conf, 'add'), collections.Callable) and hasattr(conf, 'close') and isinstance(getattr(conf, 'close'), collections.Callable):
                     self._archivers['create'][mime] = archiver
 
         if 'extract' in self._options['archivers']:
-            for mime, archiver in self._options['archivers']['extract'].items():
+            for mime, archiver in list(self._options['archivers']['extract'].items()):
                 try:
                     conf = archiver['archiver']
                     archiver['ext']
                 except:
                     continue
                 #check if conf is class and implements open, extractall and close methods
-                if re.match(r'application/', mime) and inspect.isclass(conf) and hasattr(conf, 'open') and callable(getattr(conf, 'open')) and hasattr(conf, 'extractall') and callable(getattr(conf, 'extractall')) and hasattr(conf, 'close') and callable(getattr(conf, 'close')):
+                if re.match(r'application/', mime) and inspect.isclass(conf) and hasattr(conf, 'open') and isinstance(getattr(conf, 'open'), collections.Callable) and hasattr(conf, 'extractall') and isinstance(getattr(conf, 'extractall'), collections.Callable) and hasattr(conf, 'close') and isinstance(getattr(conf, 'close'), collections.Callable):
                     self._archivers['extract'][mime] = archiver
                     
     def _unpack(self, path, archiver):

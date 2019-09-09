@@ -47,7 +47,7 @@ class ElfinderConnectorView(View):
             kwargs['content'] = context
         
         response = HttpResponse(**kwargs)
-        for key, value in additional_headers.items():
+        for key, value in list(additional_headers.items()):
             response[key] = value
 
         return response

@@ -1,4 +1,5 @@
 import os, re, magic, time, tempfile, shutil, mimetypes
+import collections
 try:
     from PIL import Image
 except ImportError:
@@ -135,7 +136,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
             pass
         
         #disable rmdir command if a custom implementation is not provided
-        if not 'rmDir' in self._options or not callable(self._options['rmDir']):
+        if not 'rmDir' in self._options or not isinstance(self._options['rmDir'], collections.Callable):
             if isinstance(self._options['storage'], FileSystemStorage):
                 self._options['rmDir'] = self._rmdir_callable
             elif not 'rmdir' in self._options['disabled']:
@@ -270,7 +271,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         """
         try:
             all_ = self._options['storage'].listdir(path)
-            return map(lambda x: self._join_path(path, x), all_[0]+all_[1])
+            return [self._join_path(path, x) for x in all_[0]+all_[1]]
         except NotImplementedError:
             return []
         
@@ -397,7 +398,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         :ref:`setting-rmDir` callable driver option, if it is available.
         If not, it raises an ``os.error``.
         """
-        if 'rmDir' in self._options and callable(self._options['rmDir']):
+        if 'rmDir' in self._options and isinstance(self._options['rmDir'], collections.Callable):
             return self._options['rmDir'](path, self._options['storage'])
         raise os.error
             
@@ -539,7 +540,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         Get the size of items in the ``path`` directory.
         """
         size = 0
-        ls = map(lambda x:os.path.join(path, x), os.listdir(path))
+        ls = [os.path.join(path, x) for x in os.listdir(path)]
         for p in ls:
             if os.path.isdir(p):
                 size += self._local_dir_size(p)
@@ -553,7 +554,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         and return the final number or files in the directory.
         """
         ls = []
-        for p in map(lambda x:os.path.join(path, x), os.listdir(path)):
+        for p in [os.path.join(path, x) for x in os.listdir(path)]:
             if os.path.islink(p):
                 raise Exception(ElfinderErrorMessages.ERROR_ARC_SYMLINKS)
             mime = self._local_file_mimetype(p)
@@ -571,7 +572,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         Move from local file to storage file.
         """
         if os.path.isdir(path):
-            for p in map(lambda x:os.path.join(path, x), os.listdir(path)):
+            for p in [os.path.join(path, x) for x in os.listdir(path)]:
                 self._move_from_local(p, self._join_path(dst, name), os.path.basename(p))
             shutil.rmtree(path)
         else:
@@ -588,7 +589,7 @@ class ElfinderVolumeStorage(ElfinderVolumeDriver):
         #print os.getcwd() 
         archive_name = self._basename(path)
         archive_dir = self._dirname(path)
-        quarantine_dir = self._join_path(self._quarantine, u'%s%s' % (str(time.time()).replace(' ', '_'), archive_name))
+        quarantine_dir = self._join_path(self._quarantine, '%s%s' % (str(time.time()).replace(' ', '_'), archive_name))
         archive_copy = self._join_path(quarantine_dir, archive_name)
         
         os.mkdir(quarantine_dir)

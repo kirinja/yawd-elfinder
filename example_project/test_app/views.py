@@ -1,5 +1,5 @@
 from django.views.generic import DetailView
-from models import YawdElfinderTestModel
+from .models import YawdElfinderTestModel
 
 class IndexView(DetailView):
     template_name = 'index.html'
