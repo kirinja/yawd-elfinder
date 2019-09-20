@@ -373,7 +373,8 @@ class ElfinderConnector:
             'header' : {
                 'Content-Type' : mime, 
                 'Content-Disposition' : '%s; %s' % (disp, filename),
-                'Content-Location' : file_['name'].encode('utf-8'),  #unicode filename support
+                # Does not work on python3. Is also not needed since Content-Disposition does the same thing
+                # 'Content-Location' : file_['name'].encode('utf-8'),  #unicode filename support
                 'Content-Transfer-Encoding' : 'binary',
                 'Content-Length' : file_['size'],
                 #'Connection' : 'close'
