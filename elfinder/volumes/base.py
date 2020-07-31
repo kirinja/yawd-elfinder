@@ -136,7 +136,7 @@ class ElfinderVolumeDriver(object):
             #Manual config for archivers.
             'archivers' : {},
             #max allowed archive files size (0 - no limit)
-            'archiveMaxSize' : 0,
+            'archiveMaxSize' : 1,
             #seconds to cache the file and dir data used by the driver 
             'cache' : 600
         }
