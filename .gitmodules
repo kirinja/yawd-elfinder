@@ -1,4 +1,0 @@
-[submodule ".deploy"]
-	path = .deploy
-	url = ssh://git@hxgntech.com:7099/tel/cicd.git
-	branch = master
